@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee  http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>cn.qingtianr.YangDispatcherServlet</servlet-class>
+        <!--暂时不需要-->
+        <!--<init-param>-->
+            <!--<param-name>spring</param-name>-->
+            <!--<param-value>classpath:/spring/demo.xml</param-value>-->
+        <!--</init-param>-->
+        <!--加入这个选项就会导致此Servlet一开始就会被加载进来-->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+</web-app>
