@@ -22,6 +22,11 @@ public class YangDispatcherServlet implements Servlet{
 
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
         System.out.println("Now It is in service function.");
+        String contextPath = req.getServletContext().getContextPath();
+        //ServeltContext中的ContextPath是YangServlet,换一种角度也可以说是打的包的名字?
+        System.out.println("ContextPath="+contextPath);
+        System.out.println("RealPath="+req.getRealPath("/"));
+        System.out.println("PathInfo="+"ServletRequest没有PathInfo，需要HttpServletRequest");
     }
 
     public String getServletInfo() {
