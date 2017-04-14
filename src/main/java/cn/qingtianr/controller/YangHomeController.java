@@ -12,6 +12,10 @@ import cn.qingtianr.Annotation.YangRequestMapping;
 @YangRequestMapping(path = "/home")
 public class YangHomeController {
 
+    private String something;
+
+    private String name;
+
     //todo:这里还需要将参数进行捕捉出来，实现动态绑定
     @YangRequestMapping(path = "/index")
     public void index(){
@@ -22,5 +26,11 @@ public class YangHomeController {
     @YangRequestMapping(path = "/sayHello")
     public void sayHello(){
         System.out.println("Hello,everybody!");
+    }
+
+    @YangRequestMapping(path = "/saySomething")
+    public void saySomething(){
+        System.out.println("I say " + something);
+        System.out.println("The name = " + name);
     }
 }

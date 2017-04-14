@@ -1,5 +1,6 @@
 package cn.qingtianr;
 
+import cn.qingtianr.Annotation.YangController;
 import cn.qingtianr.Annotation.YangRequestMapping;
 import cn.qingtianr.util.ScanPackage;
 
@@ -10,9 +11,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -75,7 +78,22 @@ public class YangHttpDispatcherServlet extends HttpServlet {
         for (int i = 0; i < urlToHandlerMappingList.size(); i++) {
             if (urlToHandlerMappingList.get(i).getUrlPath().equals(servletPath)) {
                 try {
-                    urlToHandlerMappingList.get(i).getMethod().invoke(urlToHandlerMappingList.get(i).getClazz().newInstance());
+                    Class<?> clazz = urlToHandlerMappingList.get(i).getClazz();
+                    Object obj = clazz.newInstance();
+
+                    Enumeration<String> enumeration = httpServletRequest.getParameterNames();
+
+                    while(enumeration.hasMoreElements()){
+                        for(Field field: clazz.getDeclaredFields()){
+                            String param = enumeration.nextElement();
+                            if(param.equals(field.getName())){
+                                field.setAccessible(true);
+                                field.set(obj,httpServletRequest.getParameter(param));
+                            }
+                        }
+                    }
+                    //反射调用真正的实现类
+                    urlToHandlerMappingList.get(i).getMethod().invoke(obj);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {

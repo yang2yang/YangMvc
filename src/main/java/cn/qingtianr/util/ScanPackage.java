@@ -5,6 +5,7 @@ import cn.qingtianr.Annotation.YangRequestMapping;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,9 @@ public class ScanPackage {
     //输入
     public static List<Class<?>> scan(String packageName) throws ClassNotFoundException, IOException {
 //        String path= getSrcPath()+packageToDir(packageName);
-        String path= "E:\\IdeaProjects\\base\\YangMvc\\src\\main\\java" + packageToDir(packageName);
+        String path = "E:\\IdeaProjects\\base\\YangMvc\\src\\main\\java" + packageToDir(packageName);
+        ClassLoader cl = ScanPackage.class.getClassLoader();
+
         File dir = new File(path);
 
         List<Class<?>> list = new ArrayList<>();
@@ -27,7 +30,7 @@ public class ScanPackage {
             Class clazz = Class.forName(s);
             //判断有没有下面的该目录下面的java文件有没有被YangController注解着
             //只获取被YangController注释着的Controller
-            if(clazz.getAnnotation(YangController.class) != null){
+            if (clazz.getAnnotation(YangController.class) != null) {
                 list.add(clazz);
             }
         }
@@ -57,15 +60,17 @@ public class ScanPackage {
     }
 
     public static void main(String[] args) throws Exception {
-        List<Class<?>> list = scan("cn.qingtianr.controller");
-        System.out.println(list.size());
-        for (Class<?> cla : list) {
-            System.out.println(cla.getName());
-        }
+//        List<Class<?>> list = scan("cn.qingtianr.controller");
+//        System.out.println(list.size());
+//        for (Class<?> cla : list) {
+//            System.out.println(cla.getName());
+//        }
 
 //        Class clazz = Class.forName("cn.qingtianr.controller.YangHomeController");
 //        YangController yangController = (YangController) clazz.getAnnotation(YangController.class);
 //        YangRequestMapping yangRequestMapping = (YangRequestMapping) clazz.getAnnotation(YangRequestMapping.class);
 //        System.out.println("123");
+        URL url = ClassLoader.getSystemResource("cn/qingtianr/controller");
+        System.out.println(url.getPath());
     }
 }
