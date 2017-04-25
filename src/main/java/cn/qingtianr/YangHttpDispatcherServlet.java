@@ -1,7 +1,7 @@
 package cn.qingtianr;
 
-import cn.qingtianr.Annotation.YangController;
 import cn.qingtianr.Annotation.YangRequestMapping;
+import cn.qingtianr.Annotation.YangResponseBody;
 import cn.qingtianr.util.ScanPackage;
 
 import javax.servlet.ServletException;
@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -80,9 +83,8 @@ public class YangHttpDispatcherServlet extends HttpServlet {
                 try {
                     Class<?> clazz = urlToHandlerMappingList.get(i).getClazz();
                     Object obj = clazz.newInstance();
-
+                    //将http的参数动态绑定到成员变量中
                     Enumeration<String> enumeration = httpServletRequest.getParameterNames();
-
                     while(enumeration.hasMoreElements()){
                         for(Field field: clazz.getDeclaredFields()){
                             String param = enumeration.nextElement();
@@ -93,12 +95,25 @@ public class YangHttpDispatcherServlet extends HttpServlet {
                         }
                     }
                     //反射调用真正的实现类
-                    urlToHandlerMappingList.get(i).getMethod().invoke(obj);
+                    Object object = urlToHandlerMappingList.get(i).getMethod().invoke(obj);
+                    //如果有YangResponseBody的注解，那么就将这个返回结果转换之后，写入到responsebody中
+                    if(urlToHandlerMappingList.get(i).getMethod().getAnnotation(YangResponseBody.class) != null){
+                        if(object instanceof String){
+                            //字符流输出
+//                            httpServletResponse.getWriter().print(object);
+                            //字节流输出
+                            Writer writer = new OutputStreamWriter(httpServletResponse.getOutputStream(),"ISO-8859-1");
+                            writer.write((String) object);
+                            writer.flush();
+                        }
+                    }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
                 //如果找到第一个匹配的方法执行后，跳出循环
