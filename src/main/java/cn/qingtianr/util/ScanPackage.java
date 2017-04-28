@@ -17,7 +17,7 @@ public class ScanPackage {
     //输入
     public static List<Class<?>> scan(String packageName) throws ClassNotFoundException, IOException {
 //        String path= getSrcPath()+packageToDir(packageName);
-        String path = "E:\\IdeaProjects\\base\\YangMvc\\src\\main\\java" + packageToDir(packageName);
+        String path = "D:\\Documents\\IdeaProjects\\base\\YangMvc\\src\\main\\java" + packageToDir(packageName);
         ClassLoader cl = ScanPackage.class.getClassLoader();
 
         File dir = new File(path);

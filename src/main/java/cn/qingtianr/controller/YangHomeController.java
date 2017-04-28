@@ -4,6 +4,7 @@ package cn.qingtianr.controller;
 import cn.qingtianr.Annotation.YangController;
 import cn.qingtianr.Annotation.YangRequestMapping;
 import cn.qingtianr.Annotation.YangResponseBody;
+import cn.qingtianr.model.MessageBean;
 
 /**
 **  author:jack 2017年03月2017/3/26日
@@ -39,5 +40,11 @@ public class YangHomeController {
     @YangRequestMapping(path = "/returnBody")
     public String returnBody(){
         return "It returns value";
+    }
+
+    @YangResponseBody
+    @YangRequestMapping(path = "/returnMessageBean")
+    public MessageBean returnMessageBean(){
+        return new MessageBean(true,"成功返回");
     }
 }

@@ -3,6 +3,8 @@ package cn.qingtianr;
 import cn.qingtianr.Annotation.YangRequestMapping;
 import cn.qingtianr.Annotation.YangResponseBody;
 import cn.qingtianr.util.ScanPackage;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -85,26 +87,31 @@ public class YangHttpDispatcherServlet extends HttpServlet {
                     Object obj = clazz.newInstance();
                     //将http的参数动态绑定到成员变量中
                     Enumeration<String> enumeration = httpServletRequest.getParameterNames();
-                    while(enumeration.hasMoreElements()){
-                        for(Field field: clazz.getDeclaredFields()){
+                    while (enumeration.hasMoreElements()) {
+                        for (Field field : clazz.getDeclaredFields()) {
                             String param = enumeration.nextElement();
-                            if(param.equals(field.getName())){
+                            if (param.equals(field.getName())) {
                                 field.setAccessible(true);
-                                field.set(obj,httpServletRequest.getParameter(param));
+                                field.set(obj, httpServletRequest.getParameter(param));
                             }
                         }
                     }
                     //反射调用真正的实现类
                     Object object = urlToHandlerMappingList.get(i).getMethod().invoke(obj);
                     //如果有YangResponseBody的注解，那么就将这个返回结果转换之后，写入到responsebody中
-                    if(urlToHandlerMappingList.get(i).getMethod().getAnnotation(YangResponseBody.class) != null){
-                        if(object instanceof String){
+                    if (urlToHandlerMappingList.get(i).getMethod().getAnnotation(YangResponseBody.class) != null) {
+                        if (object instanceof String) {
                             //字符流输出
 //                            httpServletResponse.getWriter().print(object);
                             //字节流输出
-                            Writer writer = new OutputStreamWriter(httpServletResponse.getOutputStream(),"ISO-8859-1");
+                            Writer writer = new OutputStreamWriter(httpServletResponse.getOutputStream(), "ISO-8859-1");
                             writer.write((String) object);
                             writer.flush();
+                        } else {//如果不是String类型的
+                            httpServletResponse.setContentType("application/json");
+                            httpServletResponse.setCharacterEncoding("UTF8");
+                            ObjectMapper mapper = new ObjectMapper();
+                            mapper.writeValue(httpServletResponse.getOutputStream(),object);
                         }
                     }
                 } catch (IllegalAccessException e) {
