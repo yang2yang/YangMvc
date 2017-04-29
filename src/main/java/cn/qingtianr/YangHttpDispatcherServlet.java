@@ -110,6 +110,7 @@ public class YangHttpDispatcherServlet extends HttpServlet {
                         } else {//如果不是String类型的
                             httpServletResponse.setContentType("application/json");
                             httpServletResponse.setCharacterEncoding("UTF8");
+                            //使用Jackson的包来进行对象的写入
                             ObjectMapper mapper = new ObjectMapper();
                             mapper.writeValue(httpServletResponse.getOutputStream(),object);
                         }
